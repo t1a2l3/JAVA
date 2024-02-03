@@ -1,181 +1,75 @@
-//FA22
+package EmployeeManagement;
+import CostumerManagement.Person;
 
-package Store;
+import java.io.Serializable;
+import java.time.LocalDate;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Scanner;
+public class Employee extends Person {
+    private final int id;
+    private int Salary;
+    private LocalDate JobStartDate;
+    private String Password;
+    private String dutyTiming;
+    public enum EmployeeRole {MANAGER , ACCOUNTMANAGER , LOANMANAGER , RECPIENT , SECURITYMANAGER, LOCKERMANAGER};
+    private EmployeeRole EmployeeJob ;
+    public Employee(int id , String Name , String FatherName, LocalDate DateOfBirth,int Age, String Gender , String Email, CostumerManagement.Person.MARITALSTATUS MaritalStatus,String Password, String Address , String city, int PIN, String State, int PhoneNumber , int Salary , LocalDate jobStartDate , String dutyTiming,EmployeeRole employeeJob){
+        super(Name , FatherName , DateOfBirth ,Age, Gender , Email , MaritalStatus , Address , city , PIN , State , PhoneNumber);
+        this.id = id;
+        this.Salary = Salary;
+        this.Password = Password;
+        this.JobStartDate = jobStartDate;
+        this.dutyTiming = dutyTiming;
+        this.EmployeeJob = employeeJob;
+    }
+    public Employee(int id , String Name , String Email , String Password , int PIN , int Salary){
+        super(Name , Email , PIN);
+        this.id = id;
+        this.Password = Password;
+        this.Salary = Salary;
+    }
+    public int getSalary() {
+        return Salary;
+    }
 
-import Store.*;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+    public void setSalary(int salary) {
+        Salary = salary;
+    }
 
-public class Employee extends Person implements Serializable {
+    public LocalDate getJobStartDate() {
+        return JobStartDate;
+    }
 
-    static  Scanner sc=new Scanner(System.in);
-    static public ArrayList<Employee> ListEmployee = new ArrayList<>();
-    private int id;
-    private String name;
-    private String address;
-    private String phone;
-    private String position;
+    public void setJobStartDate(LocalDate jobStartDate) {
+        JobStartDate = jobStartDate;
+    }
 
-    Employee(int employeeId,String name,String address,String phone,String position)
-    {
-        this.id=employeeId;
-        this.name=name;
-        this.address=address;
-        this.phone=phone;
-        this.position=position;
+    public String getDutyTiming() {
+        return dutyTiming;
+    }
+
+    public void setDutyTiming(String dutyTiming) {
+        this.dutyTiming = dutyTiming;
+    }
+    public int getId(){
+        return id;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String password) {
+        Password = password;
     }
 
     @Override
     public String toString() {
-        return "Employee{" +
+        return super.toString() +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", position='" + position + '\'' +
-                '}';
-    }
-
-    static int employeeMenu()
-    {
-        System.out.println("1-Add Employee");
-        System.out.println("2-Remove Employee");
-        System.out.println("3-Display Employee");
-        System.out.println("4-Update Employee");
-        System.out.println("0-Back");
-
-        System.out.println("Enter your choice");
-        int choice=sc.nextInt();
-
-        return choice;
-    }
-
-    static public void add(Employee employee) throws IOException, ClassNotFoundException {
-        Employee.ListEmployee.clear();
-        if (new File("store_employee.dat").exists())
-            readFromEmployee();
-
-        ListEmployee.add(employee);
-
-        writeIntoEmployee();
-        Employee.ListEmployee.clear();
-    }
-
-    static public int remove(int id) throws IOException, ClassNotFoundException {
-        Employee.ListEmployee.clear();
-        if (new File("store_employee.dat").exists())
-            readFromEmployee();
-
-        int flag=0;
-        for (int i = 0; i < ListEmployee.size(); i++) {
-            if(ListEmployee.get(i).getId()==id)
-            {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are You Sure To delete Item");
-                alert.setTitle("Confirmation Before Deletion");
-                alert.showAndWait();
-                if (alert.getResult() == ButtonType.OK) {
-                    ListEmployee.remove(i);
-                    flag = 1;
-                    break;
-                }
-            }
-        }
-
-        writeIntoEmployee();
-        Employee.ListEmployee.clear();
-
-        return flag;
-    }
-
-    static public void update(int id , Employee employee) throws IOException, ClassNotFoundException {
-        Employee.ListEmployee.clear();
-        if (new File("store_employee.dat").exists())
-            readFromEmployee();
-
-        int index=0;
-        for (int i = 0; i < ListEmployee.size(); i++) {
-            System.out.println("Id"+id);
-
-            if (Employee.ListEmployee.get(i).getId()==id)
-            {
-                System.out.println("In If");
-                index=i;
-                break;
-            }
-
-        }
-        ListEmployee.set(index,employee);
-
-        writeIntoEmployee();
-        Employee.ListEmployee.clear();
-    }
-
-    public static ArrayList<Employee> display() throws IOException, ClassNotFoundException {
-        readFromEmployee();
-
-        return ListEmployee;
-    }
-    static void readFromEmployee() throws IOException, ClassNotFoundException {
-        try {
-            FileInputStream fis=new FileInputStream("store_employee.dat");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            while (fis.available()>0)
-                Employee.ListEmployee.add((Employee) ois.readObject());
-
-            ois.close();
-        }catch (EOFException q){
-            q.printStackTrace();
-        }
-    }    static public void writeIntoEmployee() throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("store_employee.dat"));
-        for (Employee employee : Employee.ListEmployee) {
-            oos.writeObject(employee);
-        }
-        oos.close();
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int employeeId) {
-        this.id = employeeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String firstName) {
-        this.name = firstName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String lastName) {
-        this.address = lastName;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+                ", Salary=" + Salary +
+                ", JobStartDate=" + JobStartDate +
+                ", Password='" + Password +
+                ", dutyTiming='" + dutyTiming +
+                "Job Role : " + this.EmployeeJob + "\n";
     }
 }
