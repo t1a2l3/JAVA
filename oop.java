@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.lang.String;
+
 class Store implements Serializable {
     public String name;
     public String address;
@@ -100,12 +100,12 @@ class Indoor extends Store implements Serializable{
     }
 }
 
-class Outdoor extends Store implements Serializable {
+class OutdoorStore extends Store implements Serializable {
     private int Id;
     private static int counter;
     public String CityName;
 
-    public Outdoor(String name, String address, long phoneNumber, String storeManager,  String cityName) {
+    public OutdoorStore(String name, String address, long phoneNumber, String storeManager,  String cityName) {
         super(name, address, phoneNumber, storeManager);
         this.Id = ++counter;
         CityName = cityName;
@@ -123,8 +123,8 @@ class Outdoor extends Store implements Serializable {
         return counter;
     }
 
-    public static void setCounter(int counter) {
-        Outdoor.counter = counter;
+    public void setCounter(int counter) {
+        this.Id = counter++;
     }
 
     public String toString(){
@@ -406,7 +406,7 @@ class Manager extends Employees {
 
     }
 
-    @Override
+    @java.lang.Override
     public java.lang.String toString() {
         return "Manager{" +
                 "name='" + name + '\'' +
@@ -436,7 +436,7 @@ class Manager extends Employees {
         }
     }
 
-    public static void generatefinancialreport() {
+    public static void generatefinancialreport(int year, int month) {
         int Salary = 5000000;
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter Emplyoee name  ");
@@ -517,9 +517,9 @@ class Manager extends Employees {
         public String products;
         public int prices;
         public String FormsevenMed;
-        private ArrayList<medicines> medicineList;
+        private List<medicines> medicineList;
 
-        public ArrayList<medicines> getMedicineList() {
+        public List<medicines> getMedicineList() {
             return medicineList;
         }
 
@@ -789,8 +789,8 @@ class Manager extends Employees {
             return address;
         }
 
-        public List<Medicine> getMedicines() {
-            return medicines;
+        public ArrayList<Medicine> getMedicines() {
+            return (ArrayList<Medicine>) medicines;
         }
 
         public void addMedicine(Medicine medicine) {
@@ -983,21 +983,20 @@ class Manager extends Employees {
     }
 
     class History {
-
-        public String action;
-        public String details;
+        private String timeStamp;
+        private String action;
+        private String details;
 
         // Constructor
         public History(String action, String details) {
+            this.timeStamp = generateTime();
             this.action = action;
             this.details = details;
         }
 
-        public static void generateTime() {
-            History history=new History("Company built in 2000","This is medicine company.They can sell all kinds of medicine. \n They have great prestigie in market. ");
-            System.out.println(history);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("2000-5-3 HH:mm:ss");
-            System.out.println(dateFormat);
+        private String generateTime() {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(new Date());
         }
     }
 
@@ -1061,17 +1060,17 @@ class Manager extends Employees {
     public class oop {
         static Scanner sc = new Scanner(System.in);
         static ArrayList<Indoor> indoors = new ArrayList<>();
-        static ArrayList<Outdoor> outdoors = new ArrayList<>();
+        static ArrayList<OutdoorStore> outdoors = new ArrayList<>();
         static ArrayList<OutdoorCustomer> OCData = new ArrayList<>();
         static ArrayList<IndoorCustomer> ICData = new ArrayList<>();
         static ArrayList<Medicines> medicineList = new ArrayList<>();
         private static Object medicine;
         static ArrayList<Supplier> supplierList = new ArrayList<>();
-        private static ArrayList<Supplier> supplier=new ArrayList<>();
-        //private static String supplierID;
+        private static Supplier supplier;
+        private static String supplierID;
         static ArrayList<medicines> medicineStore = new ArrayList<>();
         static ArrayList<Manager> managers = new ArrayList<>();
-    static ArrayList<medicines>newMedicine=new ArrayList<>();
+
         // List to store medicinesstatic
         // List<medicines> medicineStore = new ArrayList<>();
 
@@ -1084,7 +1083,7 @@ class Manager extends Employees {
 
 
         // static ArrayList<Outdoor> outdoors = new ArrayList<Outdoor>();
-        public static void takeMedicineFromCompany()throws Exception,ClassNotFoundException {
+        public static void takeMedicineFromCompany() {
             Scanner sc = new Scanner(System.in);
 
             companies company = new companies("ABC Pharmaceuticals", "City", "Good reviews", "Medicine A", 100, "FormSevenMed");
@@ -1137,7 +1136,7 @@ class Manager extends Employees {
 
             medicines newMedicine = new medicines(medicineName, medicineId, formSevenMed, totalMedicines, price);
             medicineStore.add(newMedicine);
-            //saveMedicineListToFile();
+            saveMedicineListToFile();
             System.out.println(medicineName + " added to the store inventory.");
         }
 
@@ -1161,7 +1160,108 @@ class Manager extends Employees {
             }
         }
 
-        public static void IndoorStoreData() throws IOException, ClassNotFoundException{
+        //class Grapes {
+//    static ArrayList<Manager> managers = new ArrayList<>();
+//    static List<medicines> medicineStore = new ArrayList<>();
+//
+//    public static void main(String[] args) {
+//        System.out.println("Hello and welcome!");
+//
+//        // Example: Take 50 units of Medicine A from the company
+//        takeMedicineFromCompany("Medicine A", 50);
+//
+//        // Display the current medicine inventory in the store
+//        printMedicineStore();
+//    }
+//
+//    public static void takeMedicineFromCompany(String medicineName, int quantity) {
+//        Scanner sc = new Scanner(System.in);
+//
+//        // Create a dummy company for testing purposes
+//        companies company = new companies("ABC Pharmaceuticals", "City", "Good reviews", "Medicine A", 100, "FormSevenMed");
+//
+//        // Find the medicine in the company's inventory
+//        medicines companyMedicine = findMedicineInCompany(company, medicineName);
+//
+//        if (companyMedicine != null) {
+//            // Check if the requested quantity is available in the company's inventory
+//            if (quantity <= companyMedicine.getTotalMedicines()) {
+//                // Deduct the quantity from the company's inventory
+//                companyMedicine.setTotalMedicines(companyMedicine.getTotalMedicines() - quantity);
+//
+//                // Add the deducted quantity to the store inventory
+//                addMedicineToStore(companyMedicine, quantity);
+//
+//                // Calculate the total payment for the taken quantity
+//                double totalPayment = quantity * companyMedicine.getPrices();
+//
+//                // Make a payment to the company
+//                makePaymentToCompany(company, totalPayment);
+//
+//                System.out.println(quantity + " units of " + medicineName + " taken from the company and added to the store.");
+//                System.out.println("Total payment made to " + company.getName() + ": $" + totalPayment);
+//            } else {
+//                System.out.println("Insufficient quantity available in the company's inventory.");
+//            }
+//        } else {
+//            System.out.println("Medicine not found in the company's inventory.");
+//        }
+//    }
+//
+//    public static medicines findMedicineInCompany(companies company, String medicineName) {
+//        // Assuming the company has a list of medicines in its inventory
+//        // Loop through the list to find the medicine by name
+//        for (medicines medicine : company.getMedicineList()) {
+//            if (medicine.getName().equalsIgnoreCase(medicineName)) {
+//                return medicine;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    public static void addMedicineToStore(medicines medicine, int quantity) {
+//        // Check if the medicine already exists in the store inventory
+//        medicines existingMedicine = findMedicineInStore(medicine.getName());
+//
+//        if (existingMedicine != null) {
+//            // If the medicine already exists, update the quantity
+//            existingMedicine.setTotalMedicines(existingMedicine.getTotalMedicines() + quantity);
+//        } else {
+//            // If the medicine is not in the store, add it to the inventory
+//            medicines newMedicine = new medicines(
+//                    medicine.getName(),
+//                    medicine.getId(),
+//                    medicine.getFormSevenMed(),
+//                    quantity,
+//                    medicine.getPrices()
+//            );
+//            medicineStore.add(newMedicine);
+//        }
+//    }
+//
+//    public static medicines findMedicineInStore(String medicineName) {
+//        // Loop through the store inventory to find the medicine by name
+//        for (medicines medicine : medicineStore) {
+//            if (medicine.getName().equalsIgnoreCase(medicineName)) {
+//                return medicine;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    public static void makePaymentToCompany(companies company, double amount) {
+//        // Assuming there's a method to make a payment to the company here...
+//        // Deduct the payment amount from the company's account or handle it accordingly
+//        System.out.println("Payment of $" + amount + " made to " + company.getName() + " successfully.");
+//    }
+//
+//    public static void printMedicineStore() {
+//        System.out.println("\nStore Medicine Inventory:");
+//        for (medicines medicine : medicineStore) {
+//            System.out.println("Medicine: " + medicine.getName() + ", Quantity: " + medicine.getTotalMedicines() + ", Price: $" + medicine.getPrices());
+//        }
+//    }
+        public static void IndoorStoreData() throws IOException, ClassNotFoundException {
             System.out.println("Enter store name: ");
             String name = sc.nextLine();
             name = sc.nextLine();
@@ -1175,18 +1275,17 @@ class Manager extends Employees {
             Indoor n = new Indoor(name, address, p, E);
 //        Objec fileInputStream=new FileInputStream("Files\\date.txt") ;
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 indoors = (ArrayList<Indoor>) ois.readObject();
                 indoors.add(n);
                 ois.close();
-
 
 //        ObjectInputStream ois = new Objec;
 //        ObjectInputStream objectInputStream;
 
 
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
 
                 objectOutputStream.writeObject(indoors);
 
@@ -1198,7 +1297,7 @@ class Manager extends Employees {
 
         public static void displayIndoorStoreData() throws IOException, ClassNotFoundException {
             try {
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 ArrayList<Indoor> indoors = (ArrayList<Indoor>) objectInputStream.readObject();
 
 
@@ -1222,9 +1321,9 @@ class Manager extends Employees {
 
         public static void DeleteStoreData() {
             try {
-                File f = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File f = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
                 Scanner ss = new Scanner(f);
-                ObjectInputStream ooo = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream ooo = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 indoors = (ArrayList<Indoor>) ooo.readObject();
 
                 System.out.println("what you want to delete: ");
@@ -1270,16 +1369,16 @@ class Manager extends Employees {
             E = sc.nextLine();
             System.out.println("Enter city name:");
             String city = sc.nextLine();
-            Outdoor O = new Outdoor(name, address, p, E, city);
+            OutdoorStore O = new OutdoorStore(name, address, p, E, city);
             try {
 
 
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
-                ArrayList<Outdoor> outdoors = (ArrayList<Outdoor>) ois.readObject();
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
+                outdoors = (ArrayList<OutdoorStore>) ois.readObject();
                 outdoors.add(O);
                 ois.close();
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
 
                 objectOutputStream.writeObject(outdoors);
 
@@ -1291,11 +1390,11 @@ class Manager extends Employees {
 
         public static void displayOutdoorStoreData() throws IOException, ClassNotFoundException {
             try {
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
-                ArrayList<Outdoor> outdoors = (ArrayList<Outdoor>) objectInputStream.readObject();
+                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
+                 outdoors = (ArrayList<OutdoorStore>) objectInputStream.readObject();
 
 
-                for (Outdoor outdoor : outdoors) {
+                for (OutdoorStore outdoor : outdoors) {
                     System.out.println(outdoor);
                 }
             } catch (Exception e) {
@@ -1305,15 +1404,15 @@ class Manager extends Employees {
 
         public static void DeleteOutdoorStoreData() throws IOException, ClassNotFoundException {
             try {
-                File f = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File f = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
                 Scanner ss = new Scanner(f);
-                ObjectInputStream ooo = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
-                outdoors = (ArrayList<Outdoor>) ooo.readObject();
+                ObjectInputStream ooo = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
+                outdoors = (ArrayList<OutdoorStore>) ooo.readObject();
 
                 System.out.println("what you want to delete: ");
                 int ID = sc.nextInt();
                 boolean found = false;
-                for (Outdoor outdoor : outdoors) {
+                for (OutdoorStore outdoor : outdoors) {
                     if (outdoor.getId() == ID) {
                         outdoors.remove(outdoor);
                         found = true;
@@ -1323,7 +1422,7 @@ class Manager extends Employees {
                 if (found) {
                     System.out.println("Id" + ID + "found deleted object");
                     System.out.println("updated list");
-                    for (Outdoor outdoor : outdoors) {
+                    for (OutdoorStore outdoor : outdoors) {
                         System.out.println(outdoors);
                     }
                 } else {
@@ -1369,29 +1468,16 @@ class Manager extends Employees {
             Employees ee = new Employees(name, age, n, g, phonenumb, salary);
             try {
                 File file = new File("mm.txt");
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("mm.txt"));
                 managers = (ArrayList<Manager>) objectInputStream.readObject();
                 managers.add((Manager) ee);
 
                 objectInputStream.close();
 
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("mm.txt"));
                 objectOutputStream.writeObject(managers);
                 System.out.println("data is added");
             } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-        public static void DisplayEmplyeesdata(){
-            try{
-            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
-            managers = (ArrayList<Manager>) objectInputStream.readObject();
-
-            for (Manager m:managers)
-                System.out.println(m);
-
-        }
-            catch (Exception e){
                 System.out.println(e);
             }
         }
@@ -1411,12 +1497,13 @@ class Manager extends Employees {
             String Ocity = sc.next();
             OutdoorCustomer outdoorCustomer = new OutdoorCustomer(Cname, Cage, cphone, Cexperience, Ocity);
             try {
-                File ff = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
-                ObjectInputStream obj = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                File ff = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
+                ObjectInputStream obj = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 OCData = (ArrayList<OutdoorCustomer>) obj.readObject();
                 OCData.add(outdoorCustomer);
                 obj.close();
-                ObjectOutputStream obj1 = new ObjectOutputStream(new FileOutputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectOutputStream obj1 = new ObjectOutputStream(new FileOutputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
+                // ArrayList<OutdoorCustomer> os=new ArrayList<>();
                 obj1.writeObject(OCData);
                 obj1.close();
 
@@ -1428,7 +1515,7 @@ class Manager extends Employees {
 
         public static void OutdoorDisplayDAta() throws IOException, ClassNotFoundException {
             try {
-                ObjectInputStream obj0 = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream obj0 = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 OCData = (ArrayList<OutdoorCustomer>) obj0.readObject();
                 for (OutdoorCustomer out : OCData) {
                     System.out.println(out);
@@ -1440,9 +1527,9 @@ class Manager extends Employees {
 
         public static void outdoorCustomerDeleteData() throws IOException, ClassNotFoundException {
             try {
-                File fff = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File fff = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
                 Scanner s = new Scanner(fff);
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 OCData = (ArrayList<OutdoorCustomer>) objectInputStream.readObject();
 
                 System.out.println("what you want to delete: ");
@@ -1483,14 +1570,14 @@ class Manager extends Employees {
             Iexperience = sc.nextLine();
             IndoorCustomer indoorCustomer = new IndoorCustomer(Iname, Iage, pp, Iexperience);
             try {
-                File f1 = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
-                ObjectInputStream objj = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                File f1 = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt");
+                ObjectInputStream objj = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 ICData = (ArrayList<IndoorCustomer>) objj.readObject();
                 objj.close();
                 ICData.add(indoorCustomer);
 
 
-                ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 oo.writeObject(ICData);
                 oo.close();
 
@@ -1504,7 +1591,7 @@ class Manager extends Employees {
 
         public static void DisplayIndoorCData() throws IOException, ClassNotFoundException {
             try {
-                ObjectInputStream objj1 = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream objj1 = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\date.txt"));
                 ICData = (ArrayList<IndoorCustomer>) objj1.readObject();
 
                 for (IndoorCustomer ind : ICData) {
@@ -1520,9 +1607,9 @@ class Manager extends Employees {
 
         public static void IndoorCdelData() throws IOException, ClassNotFoundException {
             try {
-                File ffff = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File ffff = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\del.txt");
                 Scanner s = new Scanner(ffff);
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"));
+                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\del.txt"));
                 ICData = (ArrayList<IndoorCustomer>) objectInputStream.readObject();
 
                 System.out.println("what you want to delete: ");
@@ -1563,7 +1650,7 @@ class Manager extends Employees {
             Msend = sc.nextLine();
             Medicines medicine = new Medicines(MedicineName, M_id, medicineStock, Msend);
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\medicines.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1585,7 +1672,7 @@ class Manager extends Employees {
 
         public static void displayMedicineData() {
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\medicines.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1610,7 +1697,7 @@ class Manager extends Employees {
 
         public static void deleteMedicineData() {
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\medicines.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1644,12 +1731,9 @@ class Manager extends Employees {
             }
         }
 
-        public static void updateStock() {
-
+        public static void updateStock(List<Medicines> medicineList, int medicineId, int newStock) {
             try {
-
-                int newStock = 0;
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\medicines.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1657,7 +1741,6 @@ class Manager extends Employees {
                     objIn.close();
 
                     boolean found = false;
-                    int medicineId = 0;
                     for (Medicines medicine : medicineList) {
                         if (medicine.getId() == medicineId) {
                             medicine.setTotalStock(newStock);
@@ -1701,7 +1784,7 @@ class Manager extends Employees {
 
             Supplier supplier = new Supplier(S_ID, Supplier_name, S_Person, S_number, S_mail);
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\suppliers.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1723,7 +1806,7 @@ class Manager extends Employees {
 
         public static void displaySupplierData() {
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\suppliers.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1753,7 +1836,7 @@ class Manager extends Employees {
 
         public static void deleteSupplierData() {
             try {
-                File file = new File("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt");
+                File file = new File("C:\\Users\\talha\\java files\\Assigment 3\\Files\\suppliers.txt");
 
                 if (file.exists()) {
                     ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
@@ -1765,10 +1848,10 @@ class Manager extends Employees {
 
                     while (iterator.hasNext()) {
                         Supplier supplier = iterator.next();
-                        if (supplier.getSupplierID().equals(supplier)) {
+                        if (supplier.getSupplierID().equals(supplierID)) {
                             iterator.remove();
                             found = true;
-                            System.out.println("Supplier data with ID " + supplier + " deleted successfully.");
+                            System.out.println("Supplier data with ID " + supplierID + " deleted successfully.");
                             break;
                         }
                     }
@@ -1783,7 +1866,7 @@ class Manager extends Employees {
                         objOut.writeObject(supplierList);
                         objOut.close();
                     } else {
-                        System.out.println("Supplier with ID " + supplier + " not found.");
+                        System.out.println("Supplier with ID " + supplierID + " not found.");
                     }
                 } else {
                     System.out.println("No supplier data available.");
@@ -1794,7 +1877,7 @@ class Manager extends Employees {
         }
 
         private static void writeMarketData() {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"))) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\suppliers.txt"))) {
                 Scanner scanner = new Scanner(System.in);
 
                 System.out.print("Enter market price: ");
@@ -1816,7 +1899,7 @@ class Manager extends Employees {
         }
 
         private static void readMarketData() {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\riaz\\IdeaProjects\\project\\oop.txt"))) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("C:\\Users\\talha\\java files\\Assigment 3\\Files\\suppliers.txt"))) {
                 Market readMarket = (Market) ois.readObject();
                 System.out.println("Read from file: " + readMarket);
             } catch (IOException | ClassNotFoundException e) {
@@ -1824,51 +1907,60 @@ class Manager extends Employees {
             }
         }
 
+        public static void MedicineData() {
 
+        }
         public static void displayMenu() {
             System.out.println("Menu:");
             System.out.println("1. Check password for detail");
-            System.out.println("2. display Company Built time");
-            System.out.println("3. Indoor Store Data Information");
-            System.out.println("4. Add medicines too the inventory" );
-            System.out.println("5. saved medicines in the files");
-            System.out.println("6.Display medicine Store");
-            System.out.println("7.Take medicines from companies");
-            System.out.println("8.Make payment to Comapnies");
-            System.out.println("9. Outdoor store data information");
-            System.out.println("10. Outdoor customer data information");
-            System.out.println("11. Indoor Customer data information");
-            System.out.println("12. Add employees data");
-            System.out.println("13. Display employees data");
-            System.out.println("14.Generate employees Financial report");
+            System.out.println("2. Indoor Store Data Information");
+            System.out.println("3. Add medicines too the inventory" );
+            System.out.println("4. saved medicines in the files");
+            System.out.println("5. Display medicines in the file");
+            System.out.println("6. Add Outdoor store data");
+            System.out.println("7. Display Outdoor Store Data");
+            System.out.println("8. Delete Outdoor Store Data");
+            System.out.println("9. Add Outdoor Customer Data");
+            System.out.println("10. Display Outdoor Customer Data");
+            System.out.println("11. Delete Outdoor Customer Data");
+            System.out.println("12. Add Indoor Customer Data");
+            System.out.println("13. Display Indoor Customer Data");
+            System.out.println("14. Delete Indoor Customer Data");
             System.out.println("15. Add Medicine Data");
             System.out.println("16. Display Medicine Data");
             System.out.println("17. Delete Medicine Data");
-            System.out.println("18. update stock Data");
-            System.out.println("19. Add Supplier Data");
-            System.out.println("20. Display Supplier Data");
-            System.out.println("21. Delete Supplier Data");
-            System.out.println("22. Write Market Data to File");
-            System.out.println("23. Read Market Data from File");
-            System.out.println("24. Exit Program");
+            System.out.println("18. Add Supplier Data");
+            System.out.println("19. Display Supplier Data");
+            System.out.println("20. Delete Supplier Data");
+            System.out.println("21. Write Market Data to File");
+            System.out.println("22. Read Market Data from File");
+            System.out.println("23. Exit Program");
         }
 
-        public static void main(String[] args) throws Exception {
+        public static void main(String[] args) throws IOException, ClassNotFoundException {
             System.out.println("Hello and welcome!");
-          //  takeMedicineFromCompany();
-            //6printMedicineStore();
-            do{
+
+
+//        try {
+//            System.out.println("enter the  medicines details:");
+//            String name = sc.nextLine();
+//            int totalStock = sc.nextInt();
+//            String toSend = sc.next();
+//            Medicines M = new Medicines(name, totalStock, toSend);
+//            System.out.println("Name :" + M.name + " " + "totalStock: " + M.TotalStock + " " + "ToSend: " + M.ToSend);
+//        } catch (Exception e) {
+//            System.out.println("details are not true");
+//        }
+            do {
+                //takeMedicineFromCompany();
                 displayMenu();
                 int userchoice = sc.nextInt();
                 switch (userchoice) {
                     case 1 -> {
                         random_password();
                     }
-                    case 2 ->{
-                        History.generateTime();
-                    }
-                    case 3 -> {
-                        System.out.println("Press 1 for add indore data \n Press 2 for display\n Press 3 for delete data ");
+                    case 2 -> {
+                        System.out.println("Press 1 for add indore data\n Press 2 for display\n Press 3 for delete data ");
                         int i = sc.nextInt();
                         if (i == 1) {
                             IndoorStoreData();
@@ -1880,97 +1972,68 @@ class Manager extends Employees {
                             DeleteStoreData();
                         }
                     }
-                    case 4 -> {
+                    case 3 -> {
                         addMedicineToInventory();
                     }
 
-                    case 5-> {
+                    case 4 -> {
                         saveMedicineListToFile();
                     }
-                    case 6-> {
+                    case 5 -> {
                         printMedicineStore();
                     }
-                    case 7 ->{
-                        takeMedicineFromCompany();
-
+                    case 6 -> {
+                        outdoorStoreData();
                     }
-                    case 8->{
-                        makePaymentToCompany();
+                    case 7->{
+                        displayOutdoorStoreData();
                     }
-                    case 9-> {
-                        System.out.println("press 1 for add outdoordata \n press 2 for display outdoor data \n press 3 for delete data");
-                        int p= sc.nextInt();
-                        if (p==1){
-                            outdoorStoreData();
-                        }
-                        if (p==2){
-                            displayOutdoorStoreData();
-                        }
-                        if (p==3){
-                            DeleteOutdoorStoreData();
-                        }
+                    case 8 -> {
+                        DeleteOutdoorStoreData();
                     }
-
+                    case 9 -> {
+                        outdoorCustomerdata();
+                    }
                     case 10 -> {
-                        System.out.println("press 1 for add outdoorCustomerdata \n press 2 for display outdoorCustomerdata \n press 3 for deleteCustomerdata");
-                        int c= sc.nextInt();
-                        if (c==1){
-                            outdoorCustomerdata();
-                        }
-                        if (c==2){OutdoorDisplayDAta();}
-                        if (c==3){outdoorCustomerDeleteData();}
+                        OutdoorDisplayDAta();
                     }
                     case 11 -> {
-                        System.out.println("press 1 for add indoorCustomerdata \n press 2 for display intdoorCustomerdata \n press 3 for deleteindoorCustomerdata");
-                        int in= sc.nextInt();
-                        if (in==1){
-                            IndoorCustomerdata();
-                        }
-                        if (in==2){
-                            DisplayIndoorCData();
-                        }
-                        if (in==3){
-                            IndoorCdelData();
-                        }
-
+                        outdoorCustomerDeleteData();
                     }
-                    case 12 ->{
-                        EmployeesData();
+                    case 12 -> {
+                        IndoorCustomerdata();
                     }
-                    case 13 ->{
-                        DisplayEmplyeesdata();
+                    case 13 -> {
+                        DisplayIndoorCData();
                     }
-                    case 14->{
-                        Manager.generatefinancialreport();
+                    case 14 -> {
+                        IndoorCdelData();
                     }
                     case 15 -> {
                         addMedicineData();
                     }
-                    case 16-> {
+                    case 16 -> {
                         displayMedicineData();
                     }
                     case 17 -> {
                         deleteMedicineData();
                     }
-                    case 18 ->{
-                        updateStock();
-                    }
-                    case 19-> {
+                    case 18 -> {
                         addSupplierData();
                     }
-                    case 20 -> {
+                    case 19 -> {
                         displaySupplierData();
                     }
-                    case 21 -> {
+                    case 20 -> {
                         deleteSupplierData();
                     }
-                    case 22-> {
+                    case 21 -> {
                         writeMarketData();
                     }
-                    case 23 -> {
+                    case 22 -> {
                         readMarketData();
                     }
-                    case 24-> {
+                    case 23 -> {
                         ExitProgram();
                     }
 
